@@ -23,14 +23,6 @@
 
 #define READ_BUFFER_SIZE 32
 
-// serial port params
-
-#define INPUT_BUFFER_SIZE 512
-#define READ_LENGTH 8
-#define WRITE_LENGTH 8
-#define STOP_BITS 1
-#define BAUD_RATE 9600 //  number of bits transferred per second
-
 struct IOExtSer *SerialIO;   /* pointer to I/O request */
 struct MsgPort  *SerialMP;   /* pointer to Message Port*/
 
@@ -100,26 +92,4 @@ int main(void)
         printf("Unable to create message port\n");
     
     return 0;
-}
-
-void setupCustomSerialParams()
-{
-    // update I/O request
-    
-    SerialIO->io_RBufLen = INPUT_BUFFER_SIZE;
-    SerialIO->io_Baud = BAUD_RATE;
-    SerialIO->io_ReadLen = READ_LENGTH;
-    SerialIO->io_WriteLen = WRITE_LENGTH;
-    SerialIO->io_StopBits = STOP_BITS;
-    SerialIO->io_SerFlags &= ~SERF_PARTY_ON; // set parity off
-    SerialIO->io_SerFlags |= SERF_XDISABLED; // set xON/xOFF disabled
-    
-    // update serial parameters using SDCMD_SETPARAMS command
-    
-    SerialIO->IOSer.io_Command = SDCMD_SETPARAMS;
-    
-    if (DoIO(SerialIO))
-    {
-        printf("Error setting serial parameters!\n");
-    }
 }
