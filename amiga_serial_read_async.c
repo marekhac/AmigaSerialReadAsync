@@ -24,7 +24,7 @@
 #define READ_BUFFER_SIZE 32
 
 struct IOExtSer *SerialIO;   /* pointer to I/O request */
-struct MsgPort  *SerialMP;   /* pointer to Message Port*/
+struct MsgPort  *SerialMP;   /* pointer to Message Port */
 
 int main(void)
 {
@@ -40,7 +40,6 @@ int main(void)
         if (SerialIO=(struct IOExtSer *)
             CreateExtIO(SerialMP,sizeof(struct IOExtSer)) )
         {
-            
             if (OpenDevice(SERIALNAME,0L,SerialIO,0) )
                 printf("%s did not open\n",SERIALNAME);
             else
@@ -84,12 +83,14 @@ int main(void)
             DeleteExtIO(SerialIO); /* delete I/O request */
         }
         else
-            printf("Unable to create IORequest\n");
-        
-        DeletePort(SerialMP); /* delete message port */
+        {   printf("Unable to create IORequest\n");
+            DeletePort(SerialMP); /* delete message port */
+        }
     }
     else
+    {
         printf("Unable to create message port\n");
+    }
     
     return 0;
 }
