@@ -85,10 +85,6 @@ int main(void)
             {
                 /* device is open */
 
-                SerialIO->IOSer.io_Command  = CMD_READ;
-                SerialIO->IOSer.io_Length   = -1;
-                SerialIO->IOSer.io_Data     = &serialReadBuffer;
-
                 setupResetCommand();
                 setupCustomSerialParams();
                 setupReadCommand();
