@@ -28,20 +28,18 @@ struct MsgPort  *SerialMP;   /* pointer to Message Port */
 
 BYTE serialReadBuffer[READ_BUFFER_SIZE]; /* reserve 32 bytes storage */
 
-void setupResetCommand()
+void setupWriteCommand()
 {
-    SerialIO->IOSer.io_Command = CMD_RESET;
-
-    if (DoIO(SerialIO))
-    {
-        printf("Can't reset serial port!\n");
-    }
+    SerialIO->IOSer.io_Command  = CMD_WRITE;
+    SerialIO->IOSer.io_Length = -1;
+    SerialIO->IOSer.io_Data = (APTR)"WakeUp";
+    DoIO(SerialIO);
 }
 
 void setupReadCommand()
 {
     SerialIO->IOSer.io_Command = CMD_READ;
-    SerialIO->IOSer.io_Length = READ_BUFFER_SIZE;
+    SerialIO->IOSer.io_Length = -1;
     SerialIO->IOSer.io_Data = &serialReadBuffer;
 }
 
@@ -85,8 +83,8 @@ int main(void)
             {
                 /* device is open */
 
-                setupResetCommand();
                 setupCustomSerialParams();
+                setupWriteCommand();
                 setupReadCommand();
 
                 /* Initiate I/O command and not wait for it to complete */
@@ -117,6 +115,7 @@ int main(void)
                 WaitIO(SerialIO);   /* wait for abort, then clean up */
 
                 CloseDevice(SerialIO); /* close serial device */
+                DeletePort(SerialMP);
             }
 
             DeleteExtIO(SerialIO); /* delete I/O request */
