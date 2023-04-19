@@ -26,20 +26,28 @@
 struct IOExtSer *SerialIO;   /* pointer to I/O request */
 struct MsgPort  *SerialMP;   /* pointer to Message Port */
 
-BYTE serialReadBuffer[READ_BUFFER_SIZE]; /* reserve 32 bytes storage */
+struct IOTArray Terminators =
+{
+	0x00  /* EOF character */
+};
 
-void setupWriteCommand()
+UBYTE serialReadBuffer[READ_BUFFER_SIZE]; /* reserve 32 bytes storage */
+
+void sendWriteCommand()
 {
     SerialIO->IOSer.io_Command  = CMD_WRITE;
     SerialIO->IOSer.io_Length = -1;
     SerialIO->IOSer.io_Data = (APTR)"WakeUp";
-    DoIO(SerialIO);
+    if (DoIO(SerialIO))
+    {
+        printf("Error while sending CMD_WRITE command\n");
+    }
 }
 
 void setupReadCommand()
 {
     SerialIO->IOSer.io_Command = CMD_READ;
-    SerialIO->IOSer.io_Length = -1;
+    SerialIO->IOSer.io_Length = READ_BUFFER_SIZE;
     SerialIO->IOSer.io_Data = &serialReadBuffer;
 }
 
@@ -52,7 +60,8 @@ void setupCustomSerialParams()
     SerialIO->io_ReadLen = 8;
     SerialIO->io_WriteLen = 8;
     SerialIO->io_StopBits = 1;
-    SerialIO->io_SerFlags = SERF_SHARED | SERF_XDISABLED;
+    SerialIO->io_SerFlags = SERF_EOFMODE;
+    SerialIO->io_TermArray = Terminators;
 
     // update serial parameters using SDCMD_SETPARAMS command
 
@@ -84,7 +93,7 @@ int main(void)
                 /* device is open */
 
                 setupCustomSerialParams();
-                setupWriteCommand();
+                sendWriteCommand();
                 setupReadCommand();
 
                 /* Initiate I/O command and not wait for it to complete */
