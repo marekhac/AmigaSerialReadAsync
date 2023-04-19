@@ -28,6 +28,16 @@ struct MsgPort  *SerialMP;   /* pointer to Message Port */
 
 BYTE serialReadBuffer[READ_BUFFER_SIZE]; /* reserve 32 bytes storage */
 
+void setupResetCommand()
+{
+    SerialIO->IOSer.io_Command = CMD_RESET;
+
+    if (DoIO(SerialIO))
+    {
+        printf("Can't reset serial port!\n");
+    }
+}
+
 void setupReadCommand()
 {
     SerialIO->IOSer.io_Command = CMD_READ;
@@ -79,6 +89,7 @@ int main(void)
                 SerialIO->IOSer.io_Length   = -1;
                 SerialIO->IOSer.io_Data     = &serialReadBuffer;
 
+                setupResetCommand();
                 setupCustomSerialParams();
                 setupReadCommand();
 
