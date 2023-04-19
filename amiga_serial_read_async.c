@@ -41,7 +41,7 @@ void setupResetCommand()
 void setupReadCommand()
 {
     SerialIO->IOSer.io_Command = CMD_READ;
-    SerialIO->IOSer.io_Length = -1;
+    SerialIO->IOSer.io_Length = READ_BUFFER_SIZE;
     SerialIO->IOSer.io_Data = &serialReadBuffer;
 }
 
