@@ -1,6 +1,8 @@
-/*
+/* -*-*-*-*-*-*-*-*-*-*-*-*-*-*
  * Amiga_Serial_Read_Async.c
- *
+ * by Marek Hac on 20/04/2023
+ * https://github.com/marekhac
+ * -*-*-*-*-*-*-*-*-*-*-*-*-*-*
  * Example of async reading of data from serial port on Amiga.
  * Read data in the loop, until CTRL-D is pressed
  *
@@ -35,7 +37,7 @@ UBYTE serialReadBuffer[READ_BUFFER_SIZE]; /* reserve 32 bytes storage */
 
 void sendWriteCommand()
 {
-    SerialIO->IOSer.io_Command  = CMD_WRITE;
+	SerialIO->IOSer.io_Command  = CMD_WRITE;
     SerialIO->IOSer.io_Length = -1;
     SerialIO->IOSer.io_Data = (APTR)"WakeUp";
     if (DoIO(SerialIO))
@@ -53,13 +55,16 @@ void setupReadCommand()
 
 void setupCustomSerialParams()
 {
-    // update I/O request
+    // setup transmition parameters
 
     SerialIO->io_RBufLen = 512;
     SerialIO->io_Baud = 9600;
     SerialIO->io_ReadLen = 8;
     SerialIO->io_WriteLen = 8;
     SerialIO->io_StopBits = 1;
+
+    // stop receving data when termination character appear in stream
+
     SerialIO->io_SerFlags = SERF_EOFMODE;
     SerialIO->io_TermArray = Terminators;
 
