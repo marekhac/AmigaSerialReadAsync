@@ -30,14 +30,14 @@ struct MsgPort  *SerialMP;   /* pointer to Message Port */
 
 struct IOTArray Terminators =
 {
-	0x00  /* EOF character */
+    0x00  /* EOF character */
 };
 
 UBYTE serialReadBuffer[READ_BUFFER_SIZE]; /* reserve 32 bytes storage */
 
 void sendWriteCommand()
 {
-	SerialIO->IOSer.io_Command  = CMD_WRITE;
+    SerialIO->IOSer.io_Command  = CMD_WRITE;
     SerialIO->IOSer.io_Length = -1;
     SerialIO->IOSer.io_Data = (APTR)"WakeUp";
     if (DoIO(SerialIO))
